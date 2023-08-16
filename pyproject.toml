@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "tg-series-temporais-otimizacao-gerenciamento-energia"
+version = "0.1.0"
+description = ""
+authors = ["Emerson Rafael <emersona7x@hotmail.com>"]
+readme = "README.md"
+packages = [{include = "tg_series_temporais_otimizacao_gerenciamento_energia"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
