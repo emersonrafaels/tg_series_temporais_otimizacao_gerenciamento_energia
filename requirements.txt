@@ -9,3 +9,4 @@ dynaconf==3.1.11
 loguru==0.7.2
 sidetable==0.9.1
 pandas
+openpyxl==3.1.2
