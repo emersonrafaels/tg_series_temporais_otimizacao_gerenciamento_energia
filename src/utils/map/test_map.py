@@ -7,13 +7,21 @@ from src.config_app.config_app import settings
 
 from src.utils.map.map_functions import load_map
 
+# DEFININDO O DIRETÓRIO ROOT
 dir_root = Path(__file__).absolute().parent.parent.parent
 
 os.chdir(str(dir_root))
 
+# OBTENDO OS DADOS DE ESTAÇÕES
 dir_stations = 'data enrichment/data_station_with_result_api.xlsx'
 
 data = pd.read_excel(str(Path(dir_root, dir_stations)))
+
+# TORNANDO OS DADOS NULO EM "-", PARA MELHOR VISUALIZAÇÃO
+data = data.fillna("-")
+
+# ORDENANDO AS COLUNAS COMO DESEJADAS
+data = data[settings.get("LIST_COLUMNS_ORDER")]
 
 # PLOTANDO O MAPA
 validator, mapobj, _ = load_map(

@@ -3,12 +3,13 @@ from os import path
 from pathlib import Path
 from inspect import stack
 
+from src.config_app.config_app import settings
+
 import branca
 import pandas as pd
 import folium
 from branca.element import Template, MacroElement
 from folium.plugins import MarkerCluster
-from dynaconf import settings
 from loguru import logger
 
 from src.utils.generic_functions import convert_to_number
@@ -316,8 +317,6 @@ def convert_df_html(
                 """
        <div class="pricing-box-container">
       <div class="pricing-box text-center">
-        <h5>Platinum</h5>
-        <p class="price"><sup>$</sup>89<sub>/mo</sub></p>
         <ul class="features-list">
           values_li
         </ul>
@@ -448,7 +447,7 @@ def get_icon(dict_icons=None, status=None):
     try:
         # INICIALIZANDO O ICON DEFAULT
         icon_default = str(
-            Path(dir_root, settings.get("MAP_ICON_DEFALT", "assets/itau.logo"))
+            Path(dir_root, settings.get("MAP_ICON_DEFALT"))
         )
 
         # VERIFICANDO SE O ICON DEFAULT EXISTE
@@ -482,9 +481,7 @@ def get_icon(dict_icons=None, status=None):
     except Exception as ex:
         logger.error("ERRO NA FUNÇÃO: {} - {}".format(stack()[0][3], ex))
 
-        current_icon = folium.features.CustomIcon(
-            icon_image=icon_default, icon_size=(16, 16)
-        )
+        current_icon = folium.Icon("ok-sign")
 
     return current_icon
 
@@ -629,7 +626,9 @@ def load_map(
                         popup=popup,
                         icon=current_icon,
                         tooltip=get_name_tooltip(
-                            data=row, name_column_tooltip=name_column_tooltip, sep=" - "
+                            data=row,
+                            name_column_tooltip=name_column_tooltip,
+                            sep=" - "
                         ),
                         lazy=True,
                     ).add_to(obj_marker)
