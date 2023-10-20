@@ -1,0 +1,22 @@
+[default]
+
+# MAPA
+MAP_ICON_DEFALT = "ok-sign"
+MAP_DICT_ICON_DEFAULT = {}
+
+[development]
+DATA_DIR_STATIONS = "src/data enrichment/data_station_with_result_api.xlsx"
+VALIDATOR_ADD_LAYER = false # TORNANDO true, REMOVE A FEATURE DE MARKER CLUSTER
+MAP_SAVE_FIGURE = true
+MAP_LAYER_DEFAULT = "cartodbpositron"
+MAP_SAVE_NAME = "PLOT_MAP_STATIONS.html"
+VALIDATOR_MARKER_CLUSTER = true
+COLUMN_MARKER_CLUSTER = "state"
+LIST_COLUMNS_ORDER = ['name', 'country', 'state', 'city', 'lat', 'lon', 'elev', 'begin_station', 'end_station', 'begin_station_year', 'end_station_year', 'information']
+
+# PARÂMETROS USADOS NA SELEÇÃO DO MAPA
+COLUMN_STATUS = ""
+COLUMN_LATITUDE = "lat"
+COLUMN_LONGITUDE = "lon"
+MAP_COLUMN_TOOLTIP = "name"
+MAP_COLUMN_HEADER = "name"
