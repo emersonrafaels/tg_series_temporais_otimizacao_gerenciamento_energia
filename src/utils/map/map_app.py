@@ -2,13 +2,14 @@ import os
 from pathlib import Path
 
 import pandas as pd
+from loguru import logger
 
 try:
-    from src.config_app.config_app import settings
-    from src.utils.map.map_functions import load_map
-except ModuleNotFoundError:
     from config_app.config_app import settings
     from utils.map.map_functions import load_map
+except ModuleNotFoundError:
+    from src.config_app.config_app import settings
+    from src.utils.map.map_functions import load_map
 
 
 def plot_map_dataset_ghcn(data):
@@ -17,10 +18,12 @@ def plot_map_dataset_ghcn(data):
     PLOTANDO O MAPA DO DATASET GHCN
 
     # Arguments
-            data               - Required: Dados das estações para
-                                                                       plotar no mapa (DataFrame)
+        data               - Required: Dados das estações para
+                                       plotar no mapa (DataFrame)
 
     # Returns
+        validator              - Required: Validador de execução da função (Boolean)
+        mapobj                 - Required: Mapa folium (Folium Map)
 
     """
 
@@ -50,3 +53,5 @@ def plot_map_dataset_ghcn(data):
         name_column_tooltip=settings.get("MAP_COLUMN_TOOLTIP", "name"),
         name_column_header=settings.get("MAP_COLUMN_HEADER", "name"),
     )
+
+    return validator, mapobj, _

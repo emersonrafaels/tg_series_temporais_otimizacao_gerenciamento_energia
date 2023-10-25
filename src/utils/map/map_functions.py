@@ -3,17 +3,21 @@ from os import path
 from pathlib import Path
 from inspect import stack
 
-from src.config_app.config_app import settings
-
 import branca
 import pandas as pd
 import folium
+import streamlit.components.v1 as components
 from streamlit_folium import st_folium
 from branca.element import Template, MacroElement
 from folium.plugins import MarkerCluster
 from loguru import logger
 
-from src.utils.generic_functions import convert_to_number
+try:
+    from config_app.config_app import settings
+    from utils.generic_functions import convert_to_number
+except ModuleNotFoundError:
+    from src.config_app.config_app import settings
+    from src.utils.generic_functions import convert_to_number
 
 dir_root = Path(__file__).absolute().parent.parent.parent
 

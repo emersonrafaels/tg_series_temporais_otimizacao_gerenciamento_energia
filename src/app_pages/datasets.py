@@ -53,7 +53,8 @@ def load_datasets():
     st.markdown(
         "# {}".format(settings.get("APPNAME_TITLE", "TG UFABC - ENERGIA - PREVISORES"))
     )
-    st.markdown("Conjuntos de dados - Dados climáticos")
+
+    st.markdown("# 1. Conjuntos de dados - Dados climáticos")
 
     # CRIANDO O SELECT BOX DE DATASETS
     st.session_state["list_datasets"] = settings.get("LIST_DATASETS")
@@ -75,8 +76,10 @@ def load_datasets():
 
         logger.info("DADOS OBTIDOS COM SUCESSO")
 
-        # SALVANDO EM DATASET
+        # SALVANDO O DATASET
         st.session_state["dataset"] = data.get("DATAFRAME_RESULT")
+
+        st.markdown("# 2. Dados do conjunto")
 
         # OBTENDO O DATAFRAME
         dataframe_explorer_type, dataframe_return = convert_dataframe_explorer(
@@ -152,6 +155,14 @@ def load_datasets():
             "Quantidade de medições: {}".format(len(st.session_state["selected_df"]))
         )
 
+        st.markdown("# 3. Distribuição das estações metereológicas")
+        st.text(
+            "- No mapa estarão as estações metereológicas após os filtros aplicados no conjunto acima"
+        )
+        st.text(
+            "- Utilize o zoom lateral, ou o zoom do mouse, para visualizar mais detalhes dos clusters de agências"
+        )
+
         # PLOTANDO O MAPA DAS ESTAÇÕES METEREOLÓGICAS
         validator_map, st.session_state["mapobj"], _ = plot_map_dataset_ghcn(
             data=st.session_state["selected_df"]
@@ -163,6 +174,8 @@ def load_datasets():
             height=500,
             add_categorical_legend=False,
         )
+
+        st.markdown("# 4. Séries temporais medidas no conjunto de dados")
 
         if st.session_state["filter_dataset"] == "GHCN":
             # SELECIONAR TIPO DE AGRUPAMENTO
