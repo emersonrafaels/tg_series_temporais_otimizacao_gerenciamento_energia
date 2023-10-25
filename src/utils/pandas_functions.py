@@ -46,9 +46,6 @@ def select_columns_dataframe(data, list_columns_to_select):
 
     """
 
-    print(list_columns_to_select)
-    print(data.columns)
-
     list_columns_result = []
 
     for value in list_columns_to_select:
