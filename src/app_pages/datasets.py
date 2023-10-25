@@ -204,7 +204,9 @@ def load_datasets():
             dataframe_plot = st.session_state["selected_df"][st.session_state["selected_df"][st.session_state["filter_dataset_group"]].isin(filter_groupby_value)]
 
             logger.critical(dataframe_plot)
-            logger.error(column_timeseries_x_axis, column_timeseries_temp_axis)
+            logger.error(filter_groupby)
+            logger.error(column_timeseries_x_axis)
+            logger.error(column_timeseries_temp_axis)
 
             # REALIZANDO O PLOT DAS SÉRIES TEMPORAIS
             fig = create_graph_timeseries_datasets(
