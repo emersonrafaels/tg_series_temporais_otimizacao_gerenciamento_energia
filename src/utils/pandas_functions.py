@@ -26,6 +26,41 @@ def rows_to_uppercase(data, trim=False):
     return data
 
 
+def select_columns_dataframe(data, list_columns_to_select):
+
+    """
+
+        SELECIONA AS COLUNAS DESEJADAS
+        DE UM DATAFRAME
+
+        ANTES DE REALIZAR A SELEÇÃO
+        REALIZA OS FILTROS DESEJADOS.
+
+        # Arguments
+            data                          - Required: Dados para filtrar (DataFrame)
+            list_columns_to_select        - Required: Lista de colunas
+                                                      para filtrar (List)
+
+        # Returns
+            result_data                   - Required: Dados após filtro (DataFrame)
+
+    """
+
+    print(list_columns_to_select)
+    print(data.columns)
+
+    list_columns_result = []
+
+    for value in list_columns_to_select:
+        if value in data.columns and value not in list_columns_result:
+            list_columns_result.append(value)
+
+    # FILTRANDO COLUNAS DESEJADAS
+    result_data = data[list_columns_result]
+
+    return result_data
+
+
 @st.cache_data
 def load_data(
     data_dir,
