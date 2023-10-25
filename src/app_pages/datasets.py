@@ -189,18 +189,31 @@ def load_datasets():
                 column_timeseries_x_axis
             ]
 
-            logger.info(filter_groupby)
+            # DEFININDO AS OPÇÕES PARA O FILTRO MULTISELECT DO GROUP
+            options_group = st.session_state["selected_df"][st.session_state["filter_dataset_group"]].sort_values().unique()
+
+            # CRIANDO MULTISELECGT BASEADO NO FILTRO
+            # SELECIONAR TIPO DE AGRUPAMENTO
+            filter_groupby_value = st.multiselect(
+                label="Selecione os valores para exibir",
+                options=options_group,
+                default=options_group[0],
+            )
+
+            # FILTRANDO BASEADO NO MULTISELECT
+            dataframe_plot = st.session_state["selected_df"][st.session_state["selected_df"][st.session_state["filter_dataset_group"]].isin(filter_groupby_value)]
 
             # REALIZANDO O PLOT DAS SÉRIES TEMPORAIS
             fig = create_graph_timeseries_datasets(
-                data=st.session_state["selected_df"],
+                data=dataframe_plot,
                 groupby_column=filter_groupby,
                 column_x_axis=column_timeseries_x_axis,
                 column_y_axis=column_timeseries_temp_axis,
                 fig_title="Time Series - Temperatura",
             )
 
-            st.plotly_chart(figure_or_data=fig)
+            st.plotly_chart(figure_or_data=fig,
+                            use_container_width=True)
 
     else:
         logger.error("OPÇÃO NÃO VÁLIDA")
