@@ -1,22 +1,29 @@
 [default]
+# APP - CONFIGURAÇÕES GERAIS
+APPNAME = "TG UFABC - ENERGIA - PREVISOR"
+APPNAME_LOG = "TG_UFABC_ENERGIA_PREVISOR.log"
+APPNAME_TITLE = "TG UFABC - ENERGIA - PREVISOR DE GERAÇÃO DE ENERGIA"
+APPNAME_TITLE_ICON = ":factory:"
+LOGO_APP = "src/assets/logo_ufabc.jpg"
+STYLES_CSS = 'src/styles/style.css'
 
 # MAPA
 MAP_ICON_DEFALT = "ok-sign"
 MAP_DICT_ICON_DEFAULT = {}
 
 [development]
-DATA_DIR_STATIONS = "src/data enrichment/data_station_with_result_api.xlsx"
-VALIDATOR_ADD_LAYER = false # TORNANDO true, REMOVE A FEATURE DE MARKER CLUSTER
+DATA_DIR_STATIONS = "data/RESULTS/dataset_ghcn_group_freq_month.xlsx"
+VALIDATOR_ADD_LAYER = true # TORNANDO true, REMOVE A FEATURE DE MARKER CLUSTER
 MAP_SAVE_FIGURE = true
 MAP_LAYER_DEFAULT = "cartodbpositron"
 MAP_SAVE_NAME = "PLOT_MAP_STATIONS.html"
 VALIDATOR_MARKER_CLUSTER = true
 COLUMN_MARKER_CLUSTER = "state"
-LIST_COLUMNS_ORDER = ['name', 'country', 'state', 'city', 'lat', 'lon', 'elev', 'begin_station', 'end_station', 'begin_station_year', 'end_station_year', 'information']
+LIST_COLUMNS_ORDER = ['station', 'name', 'lat', 'long', 'elev', 'state', 'city', 'measurement date', 'month', 'year', 'avg_temp', 'avg_awnd', 'avg_prcp']
 
 # PARÂMETROS USADOS NA SELEÇÃO DO MAPA
 COLUMN_STATUS = ""
 COLUMN_LATITUDE = "lat"
-COLUMN_LONGITUDE = "lon"
+COLUMN_LONGITUDE = "long"
 MAP_COLUMN_TOOLTIP = "name"
 MAP_COLUMN_HEADER = "name"

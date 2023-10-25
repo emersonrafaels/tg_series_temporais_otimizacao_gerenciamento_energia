@@ -545,6 +545,21 @@ def load_map(
     name_column_header="NOME AG",
 ):
     def add_layers_control(mapobj, validator_add_layer=False):
+
+        """
+
+            ADICIONANDO CONTROLE DE LAYERS NO MAPA
+
+            # Arguments
+                mapobj                - Required: Mapa para colocar os controles (Folium Map)
+                validator_add_layer   - Optional: Validador para adicionar
+                                                  os controles (Boolean)
+
+            # Returns
+                mapobj                - Required: Mapa folium (Folium Map)
+
+        """
+
         if validator_add_layer:
             # ADICIONANDO OS LAYERS
             folium.TileLayer("openstreetmap").add_to(mapobj)
@@ -655,11 +670,14 @@ def load_map(
     # SALVANDO O DATAFRAME DE INPUT
     original_data = data.copy()
 
+    # VERIFICANDO SE A COLUNA LATITUDE E LONGITUDE ESTÃO NO DATAFRAME
     if column_latitude in data.columns and column_longitude in data.columns:
         logger.info("INICIANDO A CONSTRUÇÃO DO MAPA COM {} DADOS".format(len(data)))
 
-        # GARANTINDO COLUNAS DE LATITUDE E LONGITUDE EM FORMATO FLOAT
+        # GARANTINDO QUE AS COLUNAS DE LATITUDE E LONGITUDE EM FORMATO FLOAT
         for column in [column_latitude, column_longitude]:
+
+            # APLICANDO FORMATAÇÃO FLOAT
             data[column] = data[column].apply(
                 lambda x: convert_to_number(value_to_convert=x, type=float)
             )
@@ -673,7 +691,8 @@ def load_map(
 
         # CRIANDO O MAPA
         footprint_map = folium.Map(
-            location=[data[column_latitude].mean(), data[column_longitude].mean()],
+            location=[data[column_latitude].mean(),
+                      data[column_longitude].mean()],
             zoom_start=4,
             tiles=map_layer_default,
         )

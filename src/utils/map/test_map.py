@@ -4,7 +4,6 @@ from pathlib import Path
 import pandas as pd
 
 from src.config_app.config_app import settings
-
 from src.utils.map.map_functions import load_map
 
 # DEFININDO O DIRETÓRIO ROOT
@@ -13,11 +12,10 @@ dir_root = Path(__file__).absolute().parent.parent.parent
 os.chdir(str(dir_root))
 
 # OBTENDO OS DADOS DE ESTAÇÕES
-dir_stations = 'data enrichment/data_station_with_result_api.xlsx'
+dir_measurements = settings.get("DATA_DIR_STATIONS")
+data = pd.read_excel(str(Path(dir_root, dir_measurements)))
 
-data = pd.read_excel(str(Path(dir_root, dir_stations)))
-
-# TORNANDO OS DADOS NULO EM "-", PARA MELHOR VISUALIZAÇÃO
+# TORNANDO OS DADOS NULOS EM "-", PARA MELHOR VISUALIZAÇÃO
 data = data.fillna("-")
 
 # ORDENANDO AS COLUNAS COMO DESEJADAS
@@ -35,8 +33,8 @@ validator, mapobj, _ = load_map(
     dict_icons=None,
     validator_marker_cluster=settings.get("VALIDATOR_MARKER_CLUSTER", True),
     column_marker_cluster=settings.get("COLUMN_MARKER_CLUSTER", "state"),
-    column_latitude=settings.get("COLUMN_LATITUDE", "LATITUDE"),
-    column_longitude=settings.get("COLUMN_LONGITUDE", "LONGITUDE"),
-    name_column_tooltip=settings.get("MAP_COLUMN_TOOLTIP", "CÓDIGO AG"),
-    name_column_header=settings.get("MAP_COLUMN_HEADER", "ENDEREÇO"),
+    column_latitude=settings.get("COLUMN_LATITUDE", "lat"),
+    column_longitude=settings.get("COLUMN_LONGITUDE", "long"),
+    name_column_tooltip=settings.get("MAP_COLUMN_TOOLTIP", "name"),
+    name_column_header=settings.get("MAP_COLUMN_HEADER", "name"),
 )
