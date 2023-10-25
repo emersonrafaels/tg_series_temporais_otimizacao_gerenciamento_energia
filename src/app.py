@@ -18,6 +18,12 @@ st.set_page_config(
 
 def load_app():
 
+	# APLICANDO O STYLE CSS
+	st.markdown(
+		"<style>.css-1v0mbdj.ebxwdo61{margin-left: 0px;}</style>",
+		unsafe_allow_html=True,
+	)
+
 	with st.sidebar:
 
 		# OBTENDO O DIRETÓRIO DO LOGO
@@ -52,17 +58,17 @@ def load_app():
 			label_visibility="visible",
 		)
 
-		# DEFININDO A PÁGINA DESEJADA
-		if selected_estudo_desejado == "Modelos de previsão":
-			# CARREGANDO A PÁGINA DE AUTOSSERVIÇO
-			load_forecast()
+	# DEFININDO A PÁGINA DESEJADA
+	if selected_estudo_desejado == "Modelos de previsão":
+		# CARREGANDO A PÁGINA DE AUTOSSERVIÇO
+		load_forecast()
 
-		elif selected_estudo_desejado == "Datasets":
-			# CARREGANDO A PÁGINA DE AGÊNCIAS
-			load_datasets()
+	elif selected_estudo_desejado == "Datasets":
+		# CARREGANDO A PÁGINA DE AGÊNCIAS
+		load_datasets()
 
-		else:
-			st.empty()
+	else:
+		st.empty()
 
 	st.markdown("# {}".format(settings.get("APPNAME_TITLE",
 										   "TG UFABC - ENERGIA - PREVISORES")))

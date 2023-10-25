@@ -7,12 +7,18 @@ APPNAME_TITLE_ICON = ":factory:"
 LOGO_APP = "src/assets/logo_ufabc.jpg"
 STYLES_CSS = 'src/styles/style.css'
 
+# DATAFRAMES
+LIST_OPTIONS_DATAFRAME_EXPLORER = ["dataframe_explorer"]
+OPTION_DATAFRAME_EXPLORER = "dataframe_explorer"
+
 # MAPA
 MAP_ICON_DEFALT = "ok-sign"
 MAP_DICT_ICON_DEFAULT = {}
 
 [development]
-DATA_DIR_STATIONS = "data/RESULTS/dataset_ghcn_group_freq_month.xlsx"
+DATA_DIR_STATIONS = "src/data/RESULTS/dataset_ghcn_group_freq_month.xlsx"
+LIST_DATASETS = ["GHCN", "INMET"]
+
 VALIDATOR_ADD_LAYER = true # TORNANDO true, REMOVE A FEATURE DE MARKER CLUSTER
 MAP_SAVE_FIGURE = true
 MAP_LAYER_DEFAULT = "cartodbpositron"
