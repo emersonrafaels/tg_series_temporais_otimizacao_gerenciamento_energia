@@ -38,9 +38,7 @@ def create_graph_timeseries_datasets(
                 data_group = data.groupby(by=groupby_column).mean().reset_index()
                 name_column_group = groupby_column[0]
 
-            logger.info(data_group)
-            logger.info(column_x_axis)
-
+            # OBTENDO A SÉRIE TEMPORAL
             fig = px.line(
                 data_group,
                 x=column_x_axis,

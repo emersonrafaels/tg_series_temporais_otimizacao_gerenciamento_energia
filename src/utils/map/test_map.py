@@ -3,23 +3,28 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.config_app.config_app import settings
-from src.utils.map.map_functions import load_map
+try:
+    from src.config_app.config_app import settings
+    from src.utils.map.map_functions import load_map
+except ModuleNotFoundError:
+    from config_app.config_app import settings
+    from utils.map.map_functions import load_map
 
 # DEFININDO O DIRETÓRIO ROOT
-dir_root = Path(__file__).absolute().parent.parent.parent
-
-os.chdir(str(dir_root))
+dir_root = Path(__file__).absolute().parent.parent.parent.parent
 
 # OBTENDO OS DADOS DE ESTAÇÕES
-dir_measurements = settings.get("DATA_DIR_STATIONS")
+dir_measurements = settings.get("DATA_DIR_STATIONS_GHCN")
 data = pd.read_excel(str(Path(dir_root, dir_measurements)))
 
 # TORNANDO OS DADOS NULOS EM "-", PARA MELHOR VISUALIZAÇÃO
 data = data.fillna("-")
 
 # ORDENANDO AS COLUNAS COMO DESEJADAS
-data = data[settings.get("LIST_COLUMNS_ORDER")]
+data = data[list(settings.get("LIST_COLUMNS_ORDER_MAP_GHCN"))]
+
+# REMOVENDO DUPLICIDADES
+data = data.drop_duplicates()
 
 # PLOTANDO O MAPA
 validator, mapobj, _ = load_map(

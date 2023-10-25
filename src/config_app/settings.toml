@@ -24,13 +24,14 @@ LIST_DATASETS = ["GHCN", "INMET"]
 DATA_DIR_STATIONS_GHCN = "src/data/RESULTS/dataset_ghcn_group_freq_month.xlsx"
 LIST_COLUMNS_ORDER_GHCN = ['station', 'name', 'lat', 'long', 'elev', 'state', 'city', 'measurement date', 'month', 'year', 'avg_temp', 'avg_awnd', 'avg_prcp']
 LIST_COLUMNS_GROUP_GHCN = ['name', 'state', 'city']
+LIST_COLUMNS_ORDER_MAP_GHCN = ['station', 'name', 'lat', 'long', 'elev', 'state', 'city']
 COLUMN_TIMESERIES_X_AXIS_GHCN = 'measurement date'
 COLUMN_TIMESERIES_TEMP_GHCN = 'avg_temp'
 
 # INMET
 DATA_DIR_STATIONS_INMET = ""
 
-VALIDATOR_ADD_LAYER = true # TORNANDO true, REMOVE A FEATURE DE MARKER CLUSTER
+VALIDATOR_ADD_LAYER = false # TORNANDO true, REMOVE A FEATURE DE MARKER CLUSTER
 MAP_SAVE_FIGURE = true
 MAP_LAYER_DEFAULT = "cartodbpositron"
 MAP_SAVE_NAME = "PLOT_MAP_STATIONS.html"

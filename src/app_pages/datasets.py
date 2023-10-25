@@ -7,6 +7,7 @@ import streamlit as st
 from loguru import logger
 
 from config_app.config_app import settings
+from utils.map.map_functions import folium_static
 from utils.pandas_functions import load_data
 from utils.dataframe_explorer import dataframe_explorer
 from utils.config_dataframe_explorer import (
@@ -14,6 +15,7 @@ from utils.config_dataframe_explorer import (
     COLUMN_CONFIG_DATASET_INMET,
 )
 from utils.graphs.graphs_datasets import create_graph_timeseries_datasets
+from utils.map.map_app import plot_map_dataset_ghcn
 
 # DEFININDO O DIRETÓRIO ROOT
 dir_root = Path(__file__).absolute().parent.parent.parent
@@ -148,6 +150,18 @@ def load_datasets():
         # QUANTIDADE DE DADOS SELECIONADOS
         st.text(
             "Quantidade de medições: {}".format(len(st.session_state["selected_df"]))
+        )
+
+        # PLOTANDO O MAPA DAS ESTAÇÕES METEREOLÓGICAS
+        validator_map, st.session_state["mapobj"], _ = plot_map_dataset_ghcn(
+            data=st.session_state["selected_df"]
+        )
+
+        st_data = folium_static(
+            st.session_state["mapobj"],
+            width=900,
+            height=500,
+            add_categorical_legend=False,
         )
 
         if st.session_state["filter_dataset"] == "GHCN":

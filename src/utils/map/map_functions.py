@@ -8,6 +8,7 @@ from src.config_app.config_app import settings
 import branca
 import pandas as pd
 import folium
+from streamlit_folium import st_folium
 from branca.element import Template, MacroElement
 from folium.plugins import MarkerCluster
 from loguru import logger
@@ -150,6 +151,71 @@ def download_folium_map(mapobj):
     processed_map = mapobj._repr_html_()
 
     return processed_map
+
+
+def folium_static(
+    fig,
+    width: int = 700,
+    height: int = 500,
+    add_categorical_legend=False,
+    title_legend="Legenda",
+    list_categories=[],
+    list_colors=[],
+):
+    """
+    Renders `folium.Figure` or `folium.Map` in a Streamlit app. This method is
+    a static Streamlit Component, meaning, no information is passed back from
+    Leaflet on browser interaction.
+    Parameters
+    ----------
+    fig  : folium.Map or folium.Figure
+        Geospatial visualization to render
+    width : int
+        Width of result
+    Height : int
+        Height of result
+    Note
+    ----
+    If `height` is set on a `folium.Map` or `folium.Figure` object,
+    that value supersedes the values set with the keyword arguments of this function.
+
+    Example
+    -------
+    >>> m = folium.Map(location=[45.5236, -122.6750])
+    >>> folium_static(m)
+    """
+
+    # if Map, wrap in Figure
+    if isinstance(fig, folium.Map):
+        fig = folium.Figure().add_child(fig)
+
+        if add_categorical_legend:
+            fig, _ = add_caterical_legend_draggable(
+                folium_map=fig,
+                title=title_legend,
+                labels=list_categories,
+                colors=list_colors,
+            )
+
+        return components.html(
+            fig.render(), height=(fig.height or height) + 10, width=width
+        )
+
+    # if DualMap, get HTML representation
+    elif isinstance(fig, folium.plugins.DualMap) or isinstance(
+        fig, branca.element.Figure
+    ):
+        return components.html(fig._repr_html_(), height=height + 10, width=width)
+
+    if add_categorical_legend:
+        fig, _ = add_caterical_legend_draggable(
+            folium_map=fig,
+            title=title_legend,
+            labels=list_categories,
+            colors=list_colors,
+        )
+
+    return st_folium(fig, width=width, height=height, returned_objects=[])
 
 
 def convert_df_html(
@@ -317,12 +383,12 @@ def convert_df_html(
 
         html_table += """
        <div class="pricing-box-container">
-      <div class="pricing-box text-center">
-        <ul class="features-list">
-          values_li
-        </ul>
-      </div>
-    </div>""".replace(
+          <div class="pricing-box text-center">
+            <ul class="features-list">
+              values_li
+            </ul>
+          </div>
+        </div>""".replace(
             "values_li", str(value_li)
         )
 
@@ -566,7 +632,6 @@ def load_map(
             folium.TileLayer("Stamen Terrain").add_to(mapobj)
             folium.TileLayer("Stamen Toner").add_to(mapobj)
             folium.TileLayer("Cartodb dark_matter").add_to(mapobj)
-            folium.TileLayer("cartodbpositron").add_to(mapobj)
 
             # ADICIONANDO LAYER CONTROL
             folium.LayerControl().add_to(mapobj)
