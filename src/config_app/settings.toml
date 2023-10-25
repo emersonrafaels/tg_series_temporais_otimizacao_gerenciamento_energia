@@ -10,13 +10,16 @@ STYLES_CSS = 'src/styles/style.css'
 # DATAFRAMES
 LIST_OPTIONS_DATAFRAME_EXPLORER = ["dataframe_explorer"]
 OPTION_DATAFRAME_EXPLORER = "dataframe_explorer"
+NUM_MIN_CATEGORY = 50
+
 
 # MAPA
 MAP_ICON_DEFALT = "ok-sign"
 MAP_DICT_ICON_DEFAULT = {}
 
 [development]
-DATA_DIR_STATIONS = "src/data/RESULTS/dataset_ghcn_group_freq_month.xlsx"
+DATA_DIR_STATIONS_GHCN = "src/data/RESULTS/dataset_ghcn_group_freq_month.xlsx"
+DATA_DIR_STATIONS_INMET = ""
 LIST_DATASETS = ["GHCN", "INMET"]
 
 VALIDATOR_ADD_LAYER = true # TORNANDO true, REMOVE A FEATURE DE MARKER CLUSTER
@@ -25,7 +28,7 @@ MAP_LAYER_DEFAULT = "cartodbpositron"
 MAP_SAVE_NAME = "PLOT_MAP_STATIONS.html"
 VALIDATOR_MARKER_CLUSTER = true
 COLUMN_MARKER_CLUSTER = "state"
-LIST_COLUMNS_ORDER = ['station', 'name', 'lat', 'long', 'elev', 'state', 'city', 'measurement date', 'month', 'year', 'avg_temp', 'avg_awnd', 'avg_prcp']
+LIST_COLUMNS_ORDER_GHCN = ['station', 'name', 'lat', 'long', 'elev', 'state', 'city', 'measurement date', 'month', 'year', 'avg_temp', 'avg_awnd', 'avg_prcp']
 
 # PARÂMETROS USADOS NA SELEÇÃO DO MAPA
 COLUMN_STATUS = ""

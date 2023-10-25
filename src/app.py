@@ -20,7 +20,25 @@ def load_app():
 
 	# APLICANDO O STYLE CSS
 	st.markdown(
-		"<style>.css-1v0mbdj.ebxwdo61{margin-left: 0px;}</style>",
+		"""
+		<style>
+		#MainMenu {
+			visibility:hidden;
+		}
+		footer{
+			visibility:hidden;
+		}
+		footer:after{
+			content: 'Feito por Emerson V. Rafael com orientação da Prof. Dr(a) Patrícia Teixeira Leite Asano';
+			visibility:visible;
+			display:block;
+			position:relative;
+			color:white;
+			padding:5px;
+			top:0px;
+		}
+		</style>
+		""",
 		unsafe_allow_html=True,
 	)
 
@@ -43,7 +61,7 @@ def load_app():
 		# COMBOBOX PARA O ESTUDO DESEJADO
 		options_estudos = [
 			"Modelos de previsão",
-			"Datasets",
+			"Dados climáticos",
 		]
 
 		selected_estudo_desejado = st.radio(
@@ -63,13 +81,9 @@ def load_app():
 		# CARREGANDO A PÁGINA DE AUTOSSERVIÇO
 		load_forecast()
 
-	elif selected_estudo_desejado == "Datasets":
+	elif selected_estudo_desejado == "Dados climáticos":
 		# CARREGANDO A PÁGINA DE AGÊNCIAS
 		load_datasets()
 
 	else:
 		st.empty()
-
-	st.markdown("# {}".format(settings.get("APPNAME_TITLE",
-										   "TG UFABC - ENERGIA - PREVISORES")))
-	st.markdown("Prevendo geração e carga no Sistema Interligado Nacional (SIN)")
