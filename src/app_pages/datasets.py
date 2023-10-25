@@ -203,6 +203,9 @@ def load_datasets():
             # FILTRANDO BASEADO NO MULTISELECT
             dataframe_plot = st.session_state["selected_df"][st.session_state["selected_df"][st.session_state["filter_dataset_group"]].isin(filter_groupby_value)]
 
+            logger.critical(dataframe_plot)
+            logger.error(column_timeseries_x_axis, column_timeseries_temp_axis)
+
             # REALIZANDO O PLOT DAS SÉRIES TEMPORAIS
             fig = create_graph_timeseries_datasets(
                 data=dataframe_plot,
