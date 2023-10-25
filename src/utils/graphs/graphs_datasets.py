@@ -43,7 +43,7 @@ def create_graph_timeseries_datasets(
                                                 list_columns_to_select=list_columns_to_select)
 
                 if groupby_column in data.columns:
-                    data_group = data.groupby(by=[groupby_column]).mean().reset_index()
+                    data_group = data.groupby(by=[groupby_column]).mean(numeric_only=True).reset_index()
                     name_column_group = groupby_column
             else:
 
@@ -54,7 +54,7 @@ def create_graph_timeseries_datasets(
                 data = select_columns_dataframe(data=data,
                                                 list_columns_to_select=list_columns_to_select)
 
-                data_group = data.groupby(by=groupby_column).mean().reset_index()
+                data_group = data.groupby(by=groupby_column).mean(numeric_only=True).reset_index()
                 name_column_group = groupby_column[0]
 
             # OBTENDO A SÉRIE TEMPORAL
