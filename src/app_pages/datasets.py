@@ -195,7 +195,7 @@ def load_datasets():
             # CRIANDO MULTISELECGT BASEADO NO FILTRO
             # SELECIONAR TIPO DE AGRUPAMENTO
             filter_groupby_value = st.multiselect(
-                label="Selecione os valores para exibir",
+                label="Selecione um ou mais valores para exibir",
                 options=options_group,
                 default=options_group[0],
             )
