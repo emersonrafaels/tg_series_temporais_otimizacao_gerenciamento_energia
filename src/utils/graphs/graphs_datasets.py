@@ -52,4 +52,4 @@ def create_graph_timeseries_datasets(
             return fig
 
     except Exception as ex:
-        logger.warning("OPÇÃO NÃO VÁLIDA - {}".format(stack()[0][3]))
+        logger.warning("ERRO NA FUNÇÃO {} - {}".format(stack()[0][3], ex))

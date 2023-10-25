@@ -54,7 +54,7 @@ def load_datasets():
         "# {}".format(settings.get("APPNAME_TITLE", "TG UFABC - ENERGIA - PREVISORES"))
     )
 
-    st.markdown("# 1. Conjuntos de dados - Dados climáticos")
+    st.markdown("# 1. Selecione o conjunto de dados climáticos")
 
     # CRIANDO O SELECT BOX DE DATASETS
     st.session_state["list_datasets"] = settings.get("LIST_DATASETS")
@@ -157,7 +157,7 @@ def load_datasets():
 
         st.markdown("# 3. Distribuição das estações metereológicas")
         st.text(
-            "- No mapa estarão as estações metereológicas após os filtros aplicados no conjunto acima"
+            "- No mapa estão as estações metereológicas após os filtros aplicados no conjunto acima"
         )
         st.text(
             "- Utilize o zoom lateral, ou o zoom do mouse, para visualizar mais detalhes dos clusters de agências"
