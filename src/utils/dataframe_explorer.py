@@ -49,8 +49,9 @@ def dataframe_explorer(df: pd.DataFrame, case: bool = True) -> pd.DataFrame:
         for column in to_filter_columns:
             left, right = st.columns((1, 20))
             # Treat columns with < 10 unique values as categorical
-            if is_categorical_dtype(df[column]) or df[column].nunique() < settings.get("NUM_MIN_CATEGORY",
-                                                                                       10):
+            if is_categorical_dtype(df[column]) or df[column].nunique() < settings.get(
+                "NUM_MIN_CATEGORY", 10
+            ):
                 left.write("↳")
                 filters[column] = right.multiselect(
                     f"Valores para a coluna: {column}",

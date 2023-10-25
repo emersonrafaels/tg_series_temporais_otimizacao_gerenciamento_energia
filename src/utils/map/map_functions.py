@@ -305,7 +305,9 @@ def convert_df_html(
 
     html_header = """
         <h1 class="text-center">NOME_AGENCIA</h1>
-        """.replace("NOME_AGENCIA", str(row_df.get(col_header)))
+        """.replace(
+        "NOME_AGENCIA", str(row_df.get(col_header))
+    )
 
     # VERIFICANDO SE O ARGUMENTO É UM DICT
     if isinstance(row_df, (dict, pd.Series)):
@@ -313,16 +315,16 @@ def convert_df_html(
         for key, value in row_df.items():
             value_li += "<li><strong>{}</strong>: {}</li>\n".format(key, value)
 
-        html_table += (
-                """
+        html_table += """
        <div class="pricing-box-container">
       <div class="pricing-box text-center">
         <ul class="features-list">
           values_li
         </ul>
       </div>
-    </div>""".replace("values_li", str(value_li)))
-
+    </div>""".replace(
+            "values_li", str(value_li)
+        )
 
     # UNINDO OS HTML
     html = "{}{}{}".format(html_init, html_header, html_table)
@@ -424,6 +426,7 @@ def convert_df_htmlx(
 
     return html
 
+
 def get_icon(dict_icons=None, status=None):
     """
 
@@ -446,9 +449,7 @@ def get_icon(dict_icons=None, status=None):
 
     try:
         # INICIALIZANDO O ICON DEFAULT
-        icon_default = str(
-            Path(dir_root, settings.get("MAP_ICON_DEFALT"))
-        )
+        icon_default = str(Path(dir_root, settings.get("MAP_ICON_DEFALT")))
 
         # VERIFICANDO SE O ICON DEFAULT EXISTE
         if not path.exists(icon_default):
@@ -545,18 +546,17 @@ def load_map(
     name_column_header="NOME AG",
 ):
     def add_layers_control(mapobj, validator_add_layer=False):
-
         """
 
-            ADICIONANDO CONTROLE DE LAYERS NO MAPA
+        ADICIONANDO CONTROLE DE LAYERS NO MAPA
 
-            # Arguments
-                mapobj                - Required: Mapa para colocar os controles (Folium Map)
-                validator_add_layer   - Optional: Validador para adicionar
-                                                  os controles (Boolean)
+        # Arguments
+            mapobj                - Required: Mapa para colocar os controles (Folium Map)
+            validator_add_layer   - Optional: Validador para adicionar
+                                              os controles (Boolean)
 
-            # Returns
-                mapobj                - Required: Mapa folium (Folium Map)
+        # Returns
+            mapobj                - Required: Mapa folium (Folium Map)
 
         """
 
@@ -641,9 +641,7 @@ def load_map(
                         popup=popup,
                         icon=current_icon,
                         tooltip=get_name_tooltip(
-                            data=row,
-                            name_column_tooltip=name_column_tooltip,
-                            sep=" - "
+                            data=row, name_column_tooltip=name_column_tooltip, sep=" - "
                         ),
                         lazy=True,
                     ).add_to(obj_marker)
@@ -676,7 +674,6 @@ def load_map(
 
         # GARANTINDO QUE AS COLUNAS DE LATITUDE E LONGITUDE EM FORMATO FLOAT
         for column in [column_latitude, column_longitude]:
-
             # APLICANDO FORMATAÇÃO FLOAT
             data[column] = data[column].apply(
                 lambda x: convert_to_number(value_to_convert=x, type=float)
@@ -691,8 +688,7 @@ def load_map(
 
         # CRIANDO O MAPA
         footprint_map = folium.Map(
-            location=[data[column_latitude].mean(),
-                      data[column_longitude].mean()],
+            location=[data[column_latitude].mean(), data[column_longitude].mean()],
             zoom_start=4,
             tiles=map_layer_default,
         )

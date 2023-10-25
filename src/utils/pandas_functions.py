@@ -28,12 +28,14 @@ def rows_to_uppercase(data, trim=False):
 
 
 @st.cache_data
-def load_data(data_dir,
-              header=0,
-              column_uppercase=False,
-              row_uppercase=False,
-              trim_values=True,
-              multiindex=False):
+def load_data(
+    data_dir,
+    header=0,
+    column_uppercase=False,
+    row_uppercase=False,
+    trim_values=True,
+    multiindex=False,
+):
     """
 
     REALIZA A LEITURA DOS DADOS
@@ -63,7 +65,6 @@ def load_data(data_dir,
         df = pd.read_excel(data_dir, header)
 
     if not multiindex:
-
         if column_uppercase:
             df = column_to_uppercase(data=df)
         if row_uppercase:
@@ -88,4 +89,3 @@ def load_data(data_dir,
     dict_result["DATAFRAME_RESULT"] = df
 
     return dict_result
-

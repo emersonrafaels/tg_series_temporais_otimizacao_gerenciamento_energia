@@ -96,19 +96,17 @@ def convert_to_number(value_to_convert, type):
 
 
 def calculate_time_usage(func):
-
-
     """
 
-        CALCULA O TEMPO GASTO POR UMA FUNÇÃO.
+    CALCULA O TEMPO GASTO POR UMA FUNÇÃO.
 
-        É USADA COMO UM DECORATOR DE FUNÇÃO.
+    É USADA COMO UM DECORATOR DE FUNÇÃO.
 
-        # Arguments
-            func            - Required: Função a ser analisada (Object)
+    # Arguments
+        func            - Required: Função a ser analisada (Object)
 
-        # Returns
-            result          - Required: Resultado da função (Object)
+    # Returns
+        result          - Required: Resultado da função (Object)
 
     """
 

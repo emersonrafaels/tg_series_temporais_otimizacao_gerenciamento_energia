@@ -5,111 +5,175 @@ from inspect import stack
 import pandas as pd
 import streamlit as st
 from loguru import logger
+
 from config_app.config_app import settings
 from utils.pandas_functions import load_data
 from utils.dataframe_explorer import dataframe_explorer
-from utils.config_dataframe_explorer import COLUMN_CONFIG_DATASET_GHCN, COLUMN_CONFIG_DATASET_INMET
+from utils.config_dataframe_explorer import (
+    COLUMN_CONFIG_DATASET_GHCN,
+    COLUMN_CONFIG_DATASET_INMET,
+)
+from utils.graphs.graphs_datasets import create_graph_timeseries_datasets
 
 # DEFININDO O DIRETÓRIO ROOT
 dir_root = Path(__file__).absolute().parent.parent.parent
 
+
 def convert_dataframe_explorer(data, style):
+    """
 
-	"""
+    CONVERTENDO O DATAFRAME PARA UMA VERSÃO EXPLORÁVEL
 
-		CONVERTENDO O DATAFRAME PARA UMA VERSÃO EXPLORÁVEL
+    # Arguments
+            data                   - Required: Dados para plotar (DataFrame)
+            style				   - Required: Estilo do dataframe (String)
 
-		# Arguments
-			data                   - Required: Dados para plotar (DataFrame)
-			style				   - Required: Estilo do dataframe (String)
+    # Returns
+            style				   - Required: Estilo do dataframe (String)
+            dataframe_explorer     - Required: Dataframe formato explorer (Object)
 
-		# Returns
-			style				   - Required: Estilo do dataframe (String)
-			dataframe_explorer     - Required: Dataframe formato explorer (Object)
+    """
 
-	"""
+    if style == "dataframe_explorer":
+        return style, dataframe_explorer(data, case=False)
 
-	if style == "dataframe_explorer":
-		return style, dataframe_explorer(data, case=False)
+    else:
+        logger.warning("OPÇÃO NÃO VÁLIDA - {}".format(stack()[0][3]))
 
-	else:
-		logger.warning("OPÇÃO NÃO VÁLIDA - {}".format(stack()[0][3]))
-
-	return style, None
+    return style, None
 
 
 def load_datasets():
+    # OBTENDO A LISTA DE DATASETS DISPONÍVEIS O SELECT BOX DE DATASETS
+    st.session_state["list_datasets"] = settings.get("LIST_DATASETS")
 
-	# CRIANDO O MARKDOWN DE TÍTULO
-	st.markdown("# {}".format(settings.get("APPNAME_TITLE",
-										   "TG UFABC - ENERGIA - PREVISORES")))
-	st.markdown(
-		"Conjuntos de dados - Dados climáticos")
+    # CRIANDO O MARKDOWN DE TÍTULO
+    st.markdown(
+        "# {}".format(settings.get("APPNAME_TITLE", "TG UFABC - ENERGIA - PREVISORES"))
+    )
+    st.markdown("Conjuntos de dados - Dados climáticos")
 
-	# CRIANDO O SELECT BOX DE DATASETS
-	st.session_state["list_datasets"] = settings.get("LIST_DATASETS")
+    # CRIANDO O SELECT BOX DE DATASETS
+    st.session_state["list_datasets"] = settings.get("LIST_DATASETS")
 
-	st.session_state["filtro_dataset"] = st.selectbox(
-		label="Conjunto de dados",
-		options=st.session_state["list_datasets"],
-	)
+    st.session_state["filter_dataset"] = st.selectbox(
+        label="Conjunto de dados",
+        options=st.session_state["list_datasets"],
+    )
 
-	if st.session_state["filtro_dataset"] == "GHCN":
-		dir_measurements = settings.get("DATA_DIR_STATIONS_GHCN")
-	elif st.session_state["filtro_dataset"] == "INMET":
-		dir_measurements = settings.get("DATA_DIR_STATIONS_INMET")
+    if st.session_state["filter_dataset"] == "GHCN":
+        dir_measurements = settings.get("DATA_DIR_STATIONS_GHCN")
+    elif st.session_state["filter_dataset"] == "INMET":
+        dir_measurements = settings.get("DATA_DIR_STATIONS_INMET")
 
-	if dir_measurements:
+    if dir_measurements:
+        # OBTENDO OS DADOS DE ESTAÇÕES METEOROLÓGICAS
+        dir_measurements = settings.get("DATA_DIR_STATIONS_GHCN")
+        data = load_data(str(Path(dir_root, dir_measurements)))
 
-		# OBTENDO OS DADOS DE ESTAÇÕES METEOROLÓGICAS
-		dir_measurements = settings.get("DATA_DIR_STATIONS_GHCN")
-		data = load_data(str(Path(dir_root, dir_measurements)))
+        logger.info("DADOS OBTIDOS COM SUCESSO")
 
-		logger.info("DADOS OBTIDOS COM SUCESSO")
+        # SALVANDO EM DATASET
+        st.session_state["dataset"] = data.get("DATAFRAME_RESULT")
 
-		# SALVANDO EM DATASET
-		st.session_state["dataset"] = data.get("DATAFRAME_RESULT")
+        # OBTENDO O DATAFRAME
+        dataframe_explorer_type, dataframe_return = convert_dataframe_explorer(
+            data=st.session_state["dataset"],
+            style=settings.get("OPTION_DATAFRAME_EXPLORER", "dataframe_explorer"),
+        )
 
-		# OBTENDO O DATAFRAME
-		dataframe_explorer_type, dataframe_return = convert_dataframe_explorer(
-			data=st.session_state["dataset"],
-			style=settings.get("OPTION_DATAFRAME_EXPLORER",
-							   "dataframe_explorer"),
-		)
+        if st.session_state["filter_dataset"] == "GHCN":
+            # OBTENDO A CONFIG DAS COLUNAS
+            COLUMN_CONFIG = COLUMN_CONFIG_DATASET_GHCN
 
-		if st.session_state["filtro_dataset"] == "GHCN":
+            # OBTENDO SE HÁ ORDEM DAS COLUNAS
+            list_columns_order = settings.get(
+                "LIST_COLUMNS_ORDER_GHCN", dataframe_return.columns
+            )
 
-			# OBTENDO A CONFIG DAS COLUNAS
-			COLUMN_CONFIG = COLUMN_CONFIG_DATASET_GHCN
+            # FILTRANDO O DATAFRAME
+            dataframe_return = dataframe_return[list(list_columns_order)]
 
-			# OBTENDO SE HÁ ORDEM DAS COLUNAS
-			list_columns_order = settings.get("LIST_COLUMNS_ORDER_GHCN",
-											  dataframe_return.columns)
+            # OBTENDO A LISTA DE AGRUPAMENTOS PARA ESSE DATASET
+            st.session_state["list_filter_dataset_group"] = settings.get(
+                "LIST_COLUMNS_GROUP_GHCN", dataframe_return.columns
+            )
 
-			dataframe_return = dataframe_return[list(list_columns_order)]
+            # OBTENDO AS COLUNAS PARA PLOT
+            column_timeseries_x_axis = settings.get(
+                "COLUMN_TIMESERIES_X_AXIS_GHCN", "measurement date"
+            )
 
-		elif st.session_state["filtro_dataset"] == "INMET":
+            column_timeseries_temp_axis = settings.get(
+                "COLUMN_TIMESERIES_TEMP_GHCN", "avg_temp"
+            )
 
-			# OBTENDO A CONFIG DAS COLUNAS
-			COLUMN_CONFIG = COLUMN_CONFIG_DATASET_INMET
+        elif st.session_state["filter_dataset"] == "INMET":
+            # OBTENDO A CONFIG DAS COLUNAS
+            COLUMN_CONFIG = COLUMN_CONFIG_DATASET_INMET
 
-			# OBTENDO SE HÁ ORDEM DAS COLUNAS
-			list_columns_order = settings.get("LIST_COLUMNS_ORDER_INMET",
-											  dataframe_return.columns)
+            # OBTENDO SE HÁ ORDEM DAS COLUNAS
+            list_columns_order = settings.get(
+                "LIST_COLUMNS_ORDER_INMET", dataframe_return.columns
+            )
 
-			dataframe_return = dataframe_return[list(list_columns_order)]
+            # FILTRANDO O DATAFRAME
+            dataframe_return = dataframe_return[list(list_columns_order)]
 
-		# INCLUINDO O DATAFRAME
-		selected_df = st.dataframe(dataframe_return,
-								   use_container_width=True,
-								   column_config=COLUMN_CONFIG,
-								   hide_index=True)
+            # OBTENDO A LISTA DE AGRUPAMENTOS PARA ESSE DATASET
+            st.session_state["list_filter_dataset_group"] = settings.get(
+                "LIST_COLUMNS_GROUP_INMET", dataframe_return.columns
+            )
 
-		# OBTENDO O DATAFRAME DAS LINHAS SELECIONADAS
-		st.session_state["selected_df"] = dataframe_return
+            # OBTENDO AS COLUNAS PARA PLOT
+            column_timeseries_x_axis = settings.get(
+                "COLUMN_TIMESERIES_X_AXIS_INMET", ""
+            )
 
-		# QUANTIDADE DE DADOS SELECIONADOS
-		st.text("Quantidade de medições: {}".format(len(st.session_state["selected_df"])))
+            column_timeseries_temp_axis = settings.get(
+                "COLUMN_TIMESERIES_TEMP_INMET", ""
+            )
 
-	else:
-		logger.error("OPÇÃO NÃO VÁLIDA")
+        # INCLUINDO O DATAFRAME
+        selected_df = st.dataframe(
+            dataframe_return,
+            use_container_width=True,
+            column_config=COLUMN_CONFIG,
+            hide_index=True,
+        )
+
+        # OBTENDO O DATAFRAME DAS LINHAS SELECIONADAS
+        st.session_state["selected_df"] = dataframe_return
+
+        # QUANTIDADE DE DADOS SELECIONADOS
+        st.text(
+            "Quantidade de medições: {}".format(len(st.session_state["selected_df"]))
+        )
+
+        if st.session_state["filter_dataset"] == "GHCN":
+            # SELECIONAR TIPO DE AGRUPAMENTO
+            st.session_state["filter_dataset_group"] = st.selectbox(
+                label="Selecione o modo de agrupamento",
+                options=st.session_state["list_filter_dataset_group"],
+            )
+
+            # DEFININDO QUE O GROUPBY SERÁ PELA COLUNA ESCOLHA + A COLUNA PADRÃO
+            filter_groupby = [st.session_state["filter_dataset_group"]] + [
+                column_timeseries_x_axis
+            ]
+
+            logger.info(filter_groupby)
+
+            # REALIZANDO O PLOT DAS SÉRIES TEMPORAIS
+            fig = create_graph_timeseries_datasets(
+                data=st.session_state["selected_df"],
+                groupby_column=filter_groupby,
+                column_x_axis=column_timeseries_x_axis,
+                column_y_axis=column_timeseries_temp_axis,
+                fig_title="Time Series - Temperatura",
+            )
+
+            st.plotly_chart(figure_or_data=fig)
+
+    else:
+        logger.error("OPÇÃO NÃO VÁLIDA")
