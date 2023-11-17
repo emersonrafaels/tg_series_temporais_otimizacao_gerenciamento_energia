@@ -319,3 +319,4 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,pycharm,jupyternotebooks
 
 PLOT_MAP_STATIONS.html
+*DATASET_GHCN_PROCESING_FREQ_DAILY.csv
