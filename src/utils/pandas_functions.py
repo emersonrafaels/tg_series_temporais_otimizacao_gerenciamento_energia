@@ -62,6 +62,7 @@ def select_columns_dataframe(data, list_columns_to_select):
 def load_data(
     data_dir,
     header=0,
+    separator=",",
     column_uppercase=False,
     row_uppercase=False,
     trim_values=True,
@@ -73,11 +74,14 @@ def load_data(
 
     # Arguments
         data_dir                 - Required: Dado a ser lido (Path)
-        column_uppercase         - Required: Validador para tornar
+        header                   - Optional: Linha inicial dos dados (Integer)
+        separator                - Optional: Para arquivos csv, identifica o
+                                             separador dos dados (String)
+        column_uppercase         - Optional: Validador para tornar
                                              todas colunas uppercase (Boolean)
-        row_uppercase            - Required: Validador para tornar
+        row_uppercase            - Optional: Validador para tornar
                                              todas linhas (valores) uppercase (Boolean)
-        trim_values              - Required: Validador para remover espaços antes e depois,
+        trim_values              - Optional: Validador para remover espaços antes e depois,
                                              em valores strings (Boolean)
         multiindex               - Optional: Se é desejado ler um dataframe multiindex (Boolean)
 
@@ -91,9 +95,9 @@ def load_data(
 
     # REALIZANDO A LEITURA DOS DADOS
     if "csv" in data_dir:
-        df = pd.read_csv(data_dir, header)
+        df = pd.read_csv(data_dir, header=header, sep=separator)
     else:
-        df = pd.read_excel(data_dir, header)
+        df = pd.read_excel(data_dir, header=header)
 
     if not multiindex:
         if column_uppercase:
