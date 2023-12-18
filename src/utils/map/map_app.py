@@ -4,12 +4,8 @@ from pathlib import Path
 import pandas as pd
 from loguru import logger
 
-try:
-    from config_app.config_app import settings
-    from utils.map.map_functions import load_map
-except ModuleNotFoundError:
-    from src.config_app.config_app import settings
-    from src.utils.map.map_functions import load_map
+from src.config_app.config_app import settings
+from src.utils.map.map_functions import load_map
 
 
 def plot_map_dataset_ghcn(data):

@@ -9,7 +9,7 @@ from pandas.api.types import (
     is_object_dtype,
 )
 
-from config_app.config_app import settings
+from src.config_app.config_app import settings
 
 
 def dataframe_explorer(df: pd.DataFrame, case: bool = True) -> pd.DataFrame:

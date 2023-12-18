@@ -2,10 +2,10 @@ import os
 
 import streamlit as st
 
-from config_app.config_app import settings
-from utils.streamlit_functions import add_logo
-from app_pages.forecasts import load_forecast
-from app_pages.datasets import load_datasets
+from src.config_app.config_app import settings
+from src.utils.streamlit_functions import add_logo
+from src.app_pages.forecasts import load_forecast
+from src.app_pages.datasets import load_datasets
 
 # CONFIGURANDO O APP
 st.set_page_config(

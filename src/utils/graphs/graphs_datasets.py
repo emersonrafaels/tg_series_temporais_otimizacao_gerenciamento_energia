@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 from loguru import logger
 
-from utils.pandas_functions import select_columns_dataframe
+from src.utils.pandas_functions import select_columns_dataframe
 
 def create_graph_timeseries_datasets(
     data, groupby_column, column_x_axis, column_y_axis, fig_title=""

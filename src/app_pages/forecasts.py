@@ -1,6 +1,6 @@
 import streamlit as st
 
-from config_app.config_app import settings
+from src.config_app.config_app import settings
 
 
 def load_forecast():

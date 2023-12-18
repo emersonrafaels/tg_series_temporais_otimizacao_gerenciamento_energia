@@ -6,16 +6,17 @@ import pandas as pd
 import streamlit as st
 from loguru import logger
 
-from config_app.config_app import settings
-from utils.map.map_functions import folium_static
-from utils.pandas_functions import load_data
-from utils.dataframe_explorer import dataframe_explorer
-from utils.config_dataframe_explorer import (
+from src.config_app.config_app import settings
+from src.utils.map.map_functions import folium_static
+from src.utils.pandas_functions import load_data
+from src.utils.dataframe_explorer import dataframe_explorer
+from src.utils.config_dataframe_explorer import (
     COLUMN_CONFIG_DATASET_GHCN,
     COLUMN_CONFIG_DATASET_INMET,
 )
-from utils.graphs.graphs_datasets import create_graph_timeseries_datasets
-from utils.map.map_app import plot_map_dataset_ghcn
+from src.utils.graphs.graphs_datasets import create_graph_timeseries_datasets
+from src.utils.graphs.time_series_analysis import plot_mean_variance_over_time
+from src.utils.map.map_app import plot_map_dataset_ghcn
 
 # DEFININDO O DIRETÓRIO ROOT
 dir_root = Path(__file__).absolute().parent.parent.parent
@@ -109,8 +110,19 @@ def load_datasets():
                 "COLUMN_TIMESERIES_X_AXIS_GHCN", "measurement date"
             )
 
+            # TEMPERATURA
             column_timeseries_temp_axis = settings.get(
-                "COLUMN_TIMESERIES_TEMP_GHCN", "avg_temp"
+                "COLUMN_TIMESERIES_TEMP_GHCN", "temp"
+            )
+
+            # PRECIPITAÇÃO
+            column_timeseries_prcp_axis = settings.get(
+                "COLUMN_TIMESERIES_PRCP_GHCN", "prcp"
+            )
+
+            # VELOCIDADE DO VENTO
+            column_timeseries_wdsp_axis = settings.get(
+                "COLUMN_TIMESERIES_WDSP_GHCN", "wdsp"
             )
 
         elif st.session_state["filter_dataset"] == "INMET":
@@ -135,9 +147,11 @@ def load_datasets():
                 "COLUMN_TIMESERIES_X_AXIS_INMET", ""
             )
 
+            # TEMPERATURA
             column_timeseries_temp_axis = settings.get(
                 "COLUMN_TIMESERIES_TEMP_INMET", ""
             )
+
 
         # INCLUINDO O DATAFRAME
         selected_df = st.dataframe(
@@ -204,12 +218,48 @@ def load_datasets():
             dataframe_plot = st.session_state["selected_df"][st.session_state["selected_df"][st.session_state["filter_dataset_group"]].isin(filter_groupby_value)]
 
             # REALIZANDO O PLOT DAS SÉRIES TEMPORAIS
+
+            # TEMPERATURA
+            container_temp = st.container()
+
             fig = create_graph_timeseries_datasets(
                 data=dataframe_plot,
                 groupby_column=filter_groupby,
                 column_x_axis=column_timeseries_x_axis,
                 column_y_axis=column_timeseries_temp_axis,
-                fig_title="Time Series - Temperatura",
+                fig_title="Time Series - Temperatura (°C)",
+            )
+
+            # PLOTANDO A SÉRIE TEMPORAL
+            container_temp.plotly_chart(figure_or_data=fig,
+                                        use_container_width=True)
+
+            # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
+            st.pyplot(fig=plot_mean_variance_over_time(dataset=dataframe_plot,
+                                                       analysis_variable="temp",
+                                                       n_chunks=20,
+                                                       name_analysis_variable="Temperatura"),
+                      use_container_width=True)
+
+            # PRECIPITAÇÃO
+            fig = create_graph_timeseries_datasets(
+                data=dataframe_plot,
+                groupby_column=filter_groupby,
+                column_x_axis=column_timeseries_x_axis,
+                column_y_axis=column_timeseries_prcp_axis,
+                fig_title="Time Series - Precipitação (Pa)",
+            )
+
+            st.plotly_chart(figure_or_data=fig,
+                            use_container_width=True)
+
+            # VELOCIDADE DO VENTO
+            fig = create_graph_timeseries_datasets(
+                data=dataframe_plot,
+                groupby_column=filter_groupby,
+                column_x_axis=column_timeseries_x_axis,
+                column_y_axis=column_timeseries_wdsp_axis,
+                fig_title="Time Series - Velocidade do vento (m/s)",
             )
 
             st.plotly_chart(figure_or_data=fig,
