@@ -7,7 +7,12 @@ import plotly.express as px
 
 from statsmodels.graphics.tsaplots import plot_acf
 
-def plot_mean_variance_over_time(dataset, analysis_variable, n_chunks=20, name_analysis_variable=""):
+def plot_mean_variance_over_time(dataset,
+                                 analysis_variable,
+                                 n_chunks=20,
+                                 name_analysis_variable="",
+                                 width=10,
+                                 height=3):
 
   """
 
@@ -50,20 +55,22 @@ def plot_mean_variance_over_time(dataset, analysis_variable, n_chunks=20, name_a
           means.append(np.mean(chunk))
           variances.append((np.var(chunk)))
 
+      # DEFININDO TAMANHO DA FIGURA
+      plt.figure(figsize=(width, height))
+
       # Plot
-      plt.title('Comparando média e variância ao longo do tempo \nEstação Metereológica: {} - \nVariável {}'.format(dataset["name"].unique()[0],
-                                                                                                                    name_analysis_variable),
+      plt.title('Comparando média e variância ao longo do tempo',
                 size=15)
       plt.plot(np.arange(len(means)), [mean_global] * len(means), label='Média global', lw=1.5)
       plt.scatter(x=np.arange(len(means)), y=means, label='Média', s=100)
       plt.plot(np.arange(len(variances)), [variance_global] * len(variances), label='Variância global', lw=1.5, color='orange')
       plt.scatter(x=np.arange(len(variances)), y=variances, label='Variância', color='orange', s=100)
 
-
       # DEFININDO O YAXIS E XAXIS RANGE
       plt.ylim(-1, max(variances + means)*1.2)
       plt.xlim(-1, len(means)*1.1)
 
+      # INCLUINDO LEGENDA
       plt.legend()
 
       return plt, mean_global, variance_global, means, variances

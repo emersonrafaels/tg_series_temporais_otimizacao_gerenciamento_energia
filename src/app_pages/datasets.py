@@ -174,7 +174,7 @@ def load_datasets():
             "- No mapa estão as estações metereológicas após os filtros aplicados no conjunto acima"
         )
         st.text(
-            "- Utilize o zoom lateral, ou o zoom do mouse, para visualizar mais detalhes dos clusters de agências"
+            "- Utilize o zoom lateral, ou o zoom do mouse, para visualizar mais\n detalhes das estações metereológicas"
         )
 
         # PLOTANDO O MAPA DAS ESTAÇÕES METEREOLÓGICAS
@@ -219,9 +219,12 @@ def load_datasets():
 
             # REALIZANDO O PLOT DAS SÉRIES TEMPORAIS
 
+            st.markdown("## Temperatura")
+
             # TEMPERATURA
             container_temp = st.container()
 
+            # OBTENDO A SÉRIE TEMPORAL
             fig = create_graph_timeseries_datasets(
                 data=dataframe_plot,
                 groupby_column=filter_groupby,
@@ -230,16 +233,21 @@ def load_datasets():
                 fig_title="Time Series - Temperatura (°C)",
             )
 
+            # OBTENDO A ANÁLISE DE WHITE NOISE
+            plt, mean_global, variance_global, means, variances = plot_mean_variance_over_time(dataset=dataframe_plot,
+                                                                                               analysis_variable="temp",
+                                                                                               n_chunks=20,
+                                                                                               name_analysis_variable="Temperatura")
+
             # PLOTANDO A SÉRIE TEMPORAL
             container_temp.plotly_chart(figure_or_data=fig,
                                         use_container_width=True)
 
             # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
-            st.pyplot(fig=plot_mean_variance_over_time(dataset=dataframe_plot,
-                                                       analysis_variable="temp",
-                                                       n_chunks=20,
-                                                       name_analysis_variable="Temperatura"),
+            st.pyplot(fig=plt,
                       use_container_width=True)
+
+            st.markdown("## Precipitação")
 
             # PRECIPITAÇÃO
             fig = create_graph_timeseries_datasets(
@@ -252,6 +260,8 @@ def load_datasets():
 
             st.plotly_chart(figure_or_data=fig,
                             use_container_width=True)
+
+            st.markdown("## Velocidade do vento")
 
             # VELOCIDADE DO VENTO
             fig = create_graph_timeseries_datasets(
