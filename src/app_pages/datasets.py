@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from inspect import stack
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 from loguru import logger
@@ -16,6 +17,7 @@ from src.utils.config_dataframe_explorer import (
 )
 from src.utils.graphs.graphs_datasets import create_graph_timeseries_datasets
 from src.utils.graphs.time_series_analysis import plot_mean_variance_over_time
+from src.utils.statistics_functions import get_difference_list_values_versus_global_value
 from src.utils.map.map_app import plot_map_dataset_ghcn
 
 # DEFININDO O DIRETÓRIO ROOT
@@ -217,63 +219,155 @@ def load_datasets():
             # FILTRANDO BASEADO NO MULTISELECT
             dataframe_plot = st.session_state["selected_df"][st.session_state["selected_df"][st.session_state["filter_dataset_group"]].isin(filter_groupby_value)]
 
+            st.markdown("# Analisando as séries temporais")
+
             # REALIZANDO O PLOT DAS SÉRIES TEMPORAIS
 
-            st.markdown("## Temperatura")
+            with st.expander("Temperatura"):
 
-            # TEMPERATURA
-            container_temp = st.container()
+                # TEMPERATURA
+                container_temp = st.container()
 
-            # OBTENDO A SÉRIE TEMPORAL
-            fig = create_graph_timeseries_datasets(
-                data=dataframe_plot,
-                groupby_column=filter_groupby,
-                column_x_axis=column_timeseries_x_axis,
-                column_y_axis=column_timeseries_temp_axis,
-                fig_title="Time Series - Temperatura (°C)",
-            )
+                container_temp.markdown("## 1. Curva ao longo do tempo")
 
-            # OBTENDO A ANÁLISE DE WHITE NOISE
-            plt, mean_global, variance_global, means, variances = plot_mean_variance_over_time(dataset=dataframe_plot,
-                                                                                               analysis_variable="temp",
-                                                                                               n_chunks=20,
-                                                                                               name_analysis_variable="Temperatura")
+                # OBTENDO A SÉRIE TEMPORAL
+                fig = create_graph_timeseries_datasets(
+                    data=dataframe_plot,
+                    groupby_column=filter_groupby,
+                    column_x_axis=column_timeseries_x_axis,
+                    column_y_axis=column_timeseries_temp_axis,
+                    fig_title="Time Series - Temperatura (°C)",
+                )
 
-            # PLOTANDO A SÉRIE TEMPORAL
-            container_temp.plotly_chart(figure_or_data=fig,
-                                        use_container_width=True)
+                # PLOTANDO A SÉRIE TEMPORAL
+                container_temp.plotly_chart(figure_or_data=fig,
+                                            use_container_width=True)
 
-            # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
-            st.pyplot(fig=plt,
-                      use_container_width=True)
+                container_temp.markdown("## 2. Analisando a curva - White Noise")
 
-            st.markdown("## Precipitação")
+                # OBTENDO A ANÁLISE DE WHITE NOISE
+                plt, mean_global, variance_global, means, variances = plot_mean_variance_over_time(
+                    dataset=dataframe_plot,
+                    analysis_variable=column_timeseries_temp_axis,
+                    n_chunks=20,
+                    name_analysis_variable="Temperatura")
 
-            # PRECIPITAÇÃO
-            fig = create_graph_timeseries_datasets(
-                data=dataframe_plot,
-                groupby_column=filter_groupby,
-                column_x_axis=column_timeseries_x_axis,
-                column_y_axis=column_timeseries_prcp_axis,
-                fig_title="Time Series - Precipitação (Pa)",
-            )
+                # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
+                container_temp.pyplot(fig=plt,
+                          use_container_width=True)
 
-            st.plotly_chart(figure_or_data=fig,
-                            use_container_width=True)
+                # OBTENDO A MÁXIMA DIFERENÇA (MÉDIA)
+                list_difference = get_difference_list_values_versus_global_value(list_values=means,
+                                                                                 global_value=mean_global)
+                container_temp.text("Máxima diferença em relação à média: {}%".format(round(100*np.max(list_difference),
+                                                                                      2)))
 
-            st.markdown("## Velocidade do vento")
+                # OBTENDO A MÁXIMA DIFERENÇA (VARIÂNCIA)
+                list_difference = get_difference_list_values_versus_global_value(
+                    list_values=variances,
+                    global_value=variance_global)
+                container_temp.text(
+                    "Máxima diferença em relação à variância: {}%".format(
+                        round(100 * np.max(list_difference)),
+                        2))
 
-            # VELOCIDADE DO VENTO
-            fig = create_graph_timeseries_datasets(
-                data=dataframe_plot,
-                groupby_column=filter_groupby,
-                column_x_axis=column_timeseries_x_axis,
-                column_y_axis=column_timeseries_wdsp_axis,
-                fig_title="Time Series - Velocidade do vento (m/s)",
-            )
+            with st.expander("Precipitação"):
 
-            st.plotly_chart(figure_or_data=fig,
-                            use_container_width=True)
+                container_prcp = st.container()
+
+                container_prcp.markdown("## 1. Curva ao longo do tempo")
+
+                # PRECIPITAÇÃO
+                fig = create_graph_timeseries_datasets(
+                    data=dataframe_plot,
+                    groupby_column=filter_groupby,
+                    column_x_axis=column_timeseries_x_axis,
+                    column_y_axis=column_timeseries_prcp_axis,
+                    fig_title="Time Series - Precipitação (Pa)",
+                )
+
+                container_prcp.plotly_chart(figure_or_data=fig,
+                                use_container_width=True)
+
+                container_prcp.markdown("## 2. Analisando a curva - White Noise")
+
+                # OBTENDO A ANÁLISE DE WHITE NOISE
+                plt, mean_global, variance_global, means, variances = plot_mean_variance_over_time(
+                    dataset=dataframe_plot,
+                    analysis_variable=column_timeseries_prcp_axis,
+                    n_chunks=20,
+                    name_analysis_variable="Precipitação")
+
+                # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
+                container_prcp.pyplot(fig=plt,
+                                      use_container_width=True)
+
+                # OBTENDO A MÁXIMA DIFERENÇA (MÉDIA)
+                list_difference = get_difference_list_values_versus_global_value(
+                    list_values=means,
+                    global_value=mean_global)
+                container_prcp.text(
+                    "Máxima diferença em relação à média: {}%".format(
+                        round(100 * np.max(list_difference)),
+                        2))
+
+                # OBTENDO A MÁXIMA DIFERENÇA (VARIÂNCIA)
+                list_difference = get_difference_list_values_versus_global_value(
+                    list_values=variances,
+                    global_value=variance_global)
+                container_prcp.text(
+                    "Máxima diferença em relação à variância: {}%".format(
+                        round(100 * np.max(list_difference)),
+                        2))
+
+            with st.expander("Velocidade do vento"):
+
+                container_wdsp = st.container()
+
+                container_wdsp.markdown("## 1. Curva ao longo do tempo")
+
+                # VELOCIDADE DO VENTO
+                fig = create_graph_timeseries_datasets(
+                    data=dataframe_plot,
+                    groupby_column=filter_groupby,
+                    column_x_axis=column_timeseries_x_axis,
+                    column_y_axis=column_timeseries_wdsp_axis,
+                    fig_title="Time Series - Velocidade do vento (m/s)",
+                )
+
+                container_wdsp.plotly_chart(figure_or_data=fig,
+                                            use_container_width=True)
+
+                container_wdsp.markdown("## 2. Analisando a curva - White Noise")
+
+                # OBTENDO A ANÁLISE DE WHITE NOISE
+                plt, mean_global, variance_global, means, variances = plot_mean_variance_over_time(
+                    dataset=dataframe_plot,
+                    analysis_variable="wdsp",
+                    n_chunks=20,
+                    name_analysis_variable="Velocidade do vento")
+
+                # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
+                container_wdsp.pyplot(fig=plt,
+                          use_container_width=True)
+
+                # OBTENDO A MÁXIMA DIFERENÇA (MÉDIA)
+                list_difference = get_difference_list_values_versus_global_value(
+                    list_values=means,
+                    global_value=mean_global)
+                container_wdsp.text(
+                    "Máxima diferença em relação à média: {}%".format(
+                        round(100 * np.max(list_difference)),
+                        2))
+
+                # OBTENDO A MÁXIMA DIFERENÇA (VARIÂNCIA)
+                list_difference = get_difference_list_values_versus_global_value(
+                    list_values=variances,
+                    global_value=variance_global)
+                container_wdsp.text(
+                    "Máxima diferença em relação à variância: {}%".format(
+                        round(100 * np.max(list_difference)),
+                        2))
 
     else:
         logger.error("OPÇÃO NÃO VÁLIDA")
