@@ -42,6 +42,7 @@ def create_graph_timeseries_datasets(
                 data = select_columns_dataframe(data=data,
                                                 list_columns_to_select=list_columns_to_select)
 
+                # VERIFICANDO SE A COLUNA DE GROUPBY ESTÁ DENTRO DOS DADOS
                 if groupby_column in data.columns:
                     data_group = data.groupby(by=[groupby_column]).mean(numeric_only=True).reset_index()
                     name_column_group = groupby_column

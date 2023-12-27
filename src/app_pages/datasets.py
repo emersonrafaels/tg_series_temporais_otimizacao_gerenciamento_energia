@@ -1,24 +1,13 @@
-import os
 from pathlib import Path
 from inspect import stack
 
-import numpy as np
-import pandas as pd
 import streamlit as st
 from loguru import logger
 
 from src.config_app.config_app import settings
-from src.utils.map.map_functions import folium_static
 from src.utils.pandas_functions import load_data
 from src.utils.dataframe_explorer import dataframe_explorer
-from src.utils.config_dataframe_explorer import (
-    COLUMN_CONFIG_DATASET_GHCN,
-    COLUMN_CONFIG_DATASET_INMET,
-)
-from src.utils.graphs.graphs_datasets import create_graph_timeseries_datasets
-from src.utils.graphs.time_series_analysis import plot_mean_variance_over_time
-from src.utils.statistics_functions import get_difference_list_values_versus_global_value
-from src.utils.map.map_app import plot_map_dataset_ghcn
+from src.app_pages import datasets_ghcn, datasets_inmet
 
 # DEFININDO O DIRETÓRIO ROOT
 dir_root = Path(__file__).absolute().parent.parent.parent
@@ -49,6 +38,7 @@ def convert_dataframe_explorer(data, style):
 
 
 def load_datasets():
+
     # OBTENDO A LISTA DE DATASETS DISPONÍVEIS O SELECT BOX DE DATASETS
     st.session_state["list_datasets"] = settings.get("LIST_DATASETS")
 
@@ -73,6 +63,7 @@ def load_datasets():
         dir_measurements = settings.get("DATA_DIR_STATIONS_INMET")
 
     if dir_measurements:
+
         # OBTENDO OS DADOS DE ESTAÇÕES METEOROLÓGICAS
         dir_measurements = settings.get("DATA_DIR_STATIONS_GHCN")
         data = load_data(str(Path(dir_root, dir_measurements)))
@@ -91,283 +82,14 @@ def load_datasets():
         )
 
         if st.session_state["filter_dataset"] == "GHCN":
-            # OBTENDO A CONFIG DAS COLUNAS
-            COLUMN_CONFIG = COLUMN_CONFIG_DATASET_GHCN
 
-            # OBTENDO SE HÁ ORDEM DAS COLUNAS
-            list_columns_order = settings.get(
-                "LIST_COLUMNS_ORDER_GHCN", dataframe_return.columns
-            )
-
-            # FILTRANDO O DATAFRAME
-            dataframe_return = dataframe_return[list(list_columns_order)]
-
-            # OBTENDO A LISTA DE AGRUPAMENTOS PARA ESSE DATASET
-            st.session_state["list_filter_dataset_group"] = settings.get(
-                "LIST_COLUMNS_GROUP_GHCN", dataframe_return.columns
-            )
-
-            # OBTENDO AS COLUNAS PARA PLOT
-            column_timeseries_x_axis = settings.get(
-                "COLUMN_TIMESERIES_X_AXIS_GHCN", "measurement date"
-            )
-
-            # TEMPERATURA
-            column_timeseries_temp_axis = settings.get(
-                "COLUMN_TIMESERIES_TEMP_GHCN", "temp"
-            )
-
-            # PRECIPITAÇÃO
-            column_timeseries_prcp_axis = settings.get(
-                "COLUMN_TIMESERIES_PRCP_GHCN", "prcp"
-            )
-
-            # VELOCIDADE DO VENTO
-            column_timeseries_wdsp_axis = settings.get(
-                "COLUMN_TIMESERIES_WDSP_GHCN", "wdsp"
-            )
+            # CARREGANDO OS DADOS DO GHCN
+            datasets_ghcn.load_dataset_ghcn(dataframe_return=dataframe_return)
 
         elif st.session_state["filter_dataset"] == "INMET":
-            # OBTENDO A CONFIG DAS COLUNAS
-            COLUMN_CONFIG = COLUMN_CONFIG_DATASET_INMET
 
-            # OBTENDO SE HÁ ORDEM DAS COLUNAS
-            list_columns_order = settings.get(
-                "LIST_COLUMNS_ORDER_INMET", dataframe_return.columns
-            )
-
-            # FILTRANDO O DATAFRAME
-            dataframe_return = dataframe_return[list(list_columns_order)]
-
-            # OBTENDO A LISTA DE AGRUPAMENTOS PARA ESSE DATASET
-            st.session_state["list_filter_dataset_group"] = settings.get(
-                "LIST_COLUMNS_GROUP_INMET", dataframe_return.columns
-            )
-
-            # OBTENDO AS COLUNAS PARA PLOT
-            column_timeseries_x_axis = settings.get(
-                "COLUMN_TIMESERIES_X_AXIS_INMET", ""
-            )
-
-            # TEMPERATURA
-            column_timeseries_temp_axis = settings.get(
-                "COLUMN_TIMESERIES_TEMP_INMET", ""
-            )
-
-
-        # INCLUINDO O DATAFRAME
-        selected_df = st.dataframe(
-            dataframe_return,
-            use_container_width=True,
-            column_config=COLUMN_CONFIG,
-            hide_index=True,
-        )
-
-        # OBTENDO O DATAFRAME DAS LINHAS SELECIONADAS
-        st.session_state["selected_df"] = dataframe_return
-
-        # QUANTIDADE DE DADOS SELECIONADOS
-        st.text(
-            "Quantidade de medições: {}".format(len(st.session_state["selected_df"]))
-        )
-
-        st.markdown("# 3. Distribuição das estações metereológicas")
-        st.text(
-            "- No mapa estão as estações metereológicas após os filtros aplicados no conjunto acima"
-        )
-        st.text(
-            "- Utilize o zoom lateral, ou o zoom do mouse, para visualizar mais\n detalhes das estações metereológicas"
-        )
-
-        # PLOTANDO O MAPA DAS ESTAÇÕES METEREOLÓGICAS
-        validator_map, st.session_state["mapobj"], _ = plot_map_dataset_ghcn(
-            data=st.session_state["selected_df"]
-        )
-
-        st_data = folium_static(
-            st.session_state["mapobj"],
-            width=900,
-            height=500,
-            add_categorical_legend=False,
-        )
-
-        st.markdown("# 4. Séries temporais medidas no conjunto de dados")
-
-        if st.session_state["filter_dataset"] == "GHCN":
-            # SELECIONAR TIPO DE AGRUPAMENTO
-            st.session_state["filter_dataset_group"] = st.selectbox(
-                label="Selecione o modo de agrupamento",
-                options=st.session_state["list_filter_dataset_group"],
-            )
-
-            # DEFININDO QUE O GROUPBY SERÁ PELA COLUNA ESCOLHA + A COLUNA PADRÃO
-            filter_groupby = [st.session_state["filter_dataset_group"]] + [
-                column_timeseries_x_axis
-            ]
-
-            # DEFININDO AS OPÇÕES PARA O FILTRO MULTISELECT DO GROUP
-            options_group = st.session_state["selected_df"][st.session_state["filter_dataset_group"]].sort_values().unique()
-
-            # CRIANDO MULTISELECGT BASEADO NO FILTRO
-            # SELECIONAR TIPO DE AGRUPAMENTO
-            filter_groupby_value = st.multiselect(
-                label="Selecione um ou mais valores para exibir",
-                options=options_group,
-                default=options_group[0],
-            )
-
-            # FILTRANDO BASEADO NO MULTISELECT
-            dataframe_plot = st.session_state["selected_df"][st.session_state["selected_df"][st.session_state["filter_dataset_group"]].isin(filter_groupby_value)]
-
-            st.markdown("# Analisando as séries temporais")
-
-            # REALIZANDO O PLOT DAS SÉRIES TEMPORAIS
-
-            with st.expander("Temperatura"):
-
-                # TEMPERATURA
-                container_temp = st.container()
-
-                container_temp.markdown("## 1. Curva ao longo do tempo")
-
-                # OBTENDO A SÉRIE TEMPORAL
-                fig = create_graph_timeseries_datasets(
-                    data=dataframe_plot,
-                    groupby_column=filter_groupby,
-                    column_x_axis=column_timeseries_x_axis,
-                    column_y_axis=column_timeseries_temp_axis,
-                    fig_title="Time Series - Temperatura (°C)",
-                )
-
-                # PLOTANDO A SÉRIE TEMPORAL
-                container_temp.plotly_chart(figure_or_data=fig,
-                                            use_container_width=True)
-
-                container_temp.markdown("## 2. Analisando a curva - White Noise")
-
-                # OBTENDO A ANÁLISE DE WHITE NOISE
-                plt, mean_global, variance_global, means, variances = plot_mean_variance_over_time(
-                    dataset=dataframe_plot,
-                    analysis_variable=column_timeseries_temp_axis,
-                    n_chunks=20,
-                    name_analysis_variable="Temperatura")
-
-                # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
-                container_temp.pyplot(fig=plt,
-                          use_container_width=True)
-
-                # OBTENDO A MÁXIMA DIFERENÇA (MÉDIA)
-                list_difference = get_difference_list_values_versus_global_value(list_values=means,
-                                                                                 global_value=mean_global)
-                container_temp.text("Máxima diferença em relação à média: {}%".format(round(100*np.max(list_difference),
-                                                                                      2)))
-
-                # OBTENDO A MÁXIMA DIFERENÇA (VARIÂNCIA)
-                list_difference = get_difference_list_values_versus_global_value(
-                    list_values=variances,
-                    global_value=variance_global)
-                container_temp.text(
-                    "Máxima diferença em relação à variância: {}%".format(
-                        round(100 * np.max(list_difference)),
-                        2))
-
-            with st.expander("Precipitação"):
-
-                container_prcp = st.container()
-
-                container_prcp.markdown("## 1. Curva ao longo do tempo")
-
-                # PRECIPITAÇÃO
-                fig = create_graph_timeseries_datasets(
-                    data=dataframe_plot,
-                    groupby_column=filter_groupby,
-                    column_x_axis=column_timeseries_x_axis,
-                    column_y_axis=column_timeseries_prcp_axis,
-                    fig_title="Time Series - Precipitação (Pa)",
-                )
-
-                container_prcp.plotly_chart(figure_or_data=fig,
-                                use_container_width=True)
-
-                container_prcp.markdown("## 2. Analisando a curva - White Noise")
-
-                # OBTENDO A ANÁLISE DE WHITE NOISE
-                plt, mean_global, variance_global, means, variances = plot_mean_variance_over_time(
-                    dataset=dataframe_plot,
-                    analysis_variable=column_timeseries_prcp_axis,
-                    n_chunks=20,
-                    name_analysis_variable="Precipitação")
-
-                # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
-                container_prcp.pyplot(fig=plt,
-                                      use_container_width=True)
-
-                # OBTENDO A MÁXIMA DIFERENÇA (MÉDIA)
-                list_difference = get_difference_list_values_versus_global_value(
-                    list_values=means,
-                    global_value=mean_global)
-                container_prcp.text(
-                    "Máxima diferença em relação à média: {}%".format(
-                        round(100 * np.max(list_difference)),
-                        2))
-
-                # OBTENDO A MÁXIMA DIFERENÇA (VARIÂNCIA)
-                list_difference = get_difference_list_values_versus_global_value(
-                    list_values=variances,
-                    global_value=variance_global)
-                container_prcp.text(
-                    "Máxima diferença em relação à variância: {}%".format(
-                        round(100 * np.max(list_difference)),
-                        2))
-
-            with st.expander("Velocidade do vento"):
-
-                container_wdsp = st.container()
-
-                container_wdsp.markdown("## 1. Curva ao longo do tempo")
-
-                # VELOCIDADE DO VENTO
-                fig = create_graph_timeseries_datasets(
-                    data=dataframe_plot,
-                    groupby_column=filter_groupby,
-                    column_x_axis=column_timeseries_x_axis,
-                    column_y_axis=column_timeseries_wdsp_axis,
-                    fig_title="Time Series - Velocidade do vento (m/s)",
-                )
-
-                container_wdsp.plotly_chart(figure_or_data=fig,
-                                            use_container_width=True)
-
-                container_wdsp.markdown("## 2. Analisando a curva - White Noise")
-
-                # OBTENDO A ANÁLISE DE WHITE NOISE
-                plt, mean_global, variance_global, means, variances = plot_mean_variance_over_time(
-                    dataset=dataframe_plot,
-                    analysis_variable="wdsp",
-                    n_chunks=20,
-                    name_analysis_variable="Velocidade do vento")
-
-                # PLOTANDO A ANÁLISE DA MÉDIA E VARIÂNCIA AO LONGO DO TEMPO
-                container_wdsp.pyplot(fig=plt,
-                          use_container_width=True)
-
-                # OBTENDO A MÁXIMA DIFERENÇA (MÉDIA)
-                list_difference = get_difference_list_values_versus_global_value(
-                    list_values=means,
-                    global_value=mean_global)
-                container_wdsp.text(
-                    "Máxima diferença em relação à média: {}%".format(
-                        round(100 * np.max(list_difference)),
-                        2))
-
-                # OBTENDO A MÁXIMA DIFERENÇA (VARIÂNCIA)
-                list_difference = get_difference_list_values_versus_global_value(
-                    list_values=variances,
-                    global_value=variance_global)
-                container_wdsp.text(
-                    "Máxima diferença em relação à variância: {}%".format(
-                        round(100 * np.max(list_difference)),
-                        2))
+            # CARREGANDO OS DADOS DO INMET
+            datasets_inmet.load_dataset_inmet(dataframe_return=dataframe_return)
 
     else:
         logger.error("OPÇÃO NÃO VÁLIDA")

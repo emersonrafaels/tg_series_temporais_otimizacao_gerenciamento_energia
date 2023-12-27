@@ -74,3 +74,18 @@ def plot_mean_variance_over_time(dataset,
       plt.legend()
 
       return plt, mean_global, variance_global, means, variances
+
+def validate_white_noise(mean, max_diff_mean, max_diff_var):
+
+  """
+
+    VALIDA SE UMA CURVA É WHITE NOISE
+
+    # Arguments
+      mean                  - Required:
+      max_diff_mean         - Required:
+      max_diff_var          - Required:
+
+    # Returns
+
+  """
