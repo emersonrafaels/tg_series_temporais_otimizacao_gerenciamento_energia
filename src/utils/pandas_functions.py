@@ -27,22 +27,21 @@ def rows_to_uppercase(data, trim=False):
 
 
 def select_columns_dataframe(data, list_columns_to_select):
-
     """
 
-        SELECIONA AS COLUNAS DESEJADAS
-        DE UM DATAFRAME
+    SELECIONA AS COLUNAS DESEJADAS
+    DE UM DATAFRAME
 
-        ANTES DE REALIZAR A SELEÇÃO
-        REALIZA OS FILTROS DESEJADOS.
+    ANTES DE REALIZAR A SELEÇÃO
+    REALIZA OS FILTROS DESEJADOS.
 
-        # Arguments
-            data                          - Required: Dados para filtrar (DataFrame)
-            list_columns_to_select        - Required: Lista de colunas
-                                                      para filtrar (List)
+    # Arguments
+        data                          - Required: Dados para filtrar (DataFrame)
+        list_columns_to_select        - Required: Lista de colunas
+                                                  para filtrar (List)
 
-        # Returns
-            result_data                   - Required: Dados após filtro (DataFrame)
+    # Returns
+        result_data                   - Required: Dados após filtro (DataFrame)
 
     """
 

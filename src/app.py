@@ -49,8 +49,7 @@ def load_app():
         # ADICIONANDO LOGO
         add_logo(dir_logo, width=210, location="sidebar", position_image="left")
 
-        st.markdown("Bem vindo(a): {}".format(os.environ.get("username",
-                                                             "Visitante")))
+        st.markdown("Bem vindo(a): {}".format(os.environ.get("username", "Visitante")))
 
         # CRIANDO UMA LINHA EM BRANCO
         st.divider()

@@ -38,7 +38,6 @@ def convert_dataframe_explorer(data, style):
 
 
 def load_datasets():
-
     # OBTENDO A LISTA DE DATASETS DISPONÍVEIS O SELECT BOX DE DATASETS
     st.session_state["list_datasets"] = settings.get("LIST_DATASETS")
 
@@ -63,7 +62,6 @@ def load_datasets():
         dir_measurements = settings.get("DATA_DIR_STATIONS_INMET")
 
     if dir_measurements:
-
         # OBTENDO OS DADOS DE ESTAÇÕES METEOROLÓGICAS
         dir_measurements = settings.get("DATA_DIR_STATIONS_GHCN")
         data = load_data(str(Path(dir_root, dir_measurements)))
@@ -82,12 +80,10 @@ def load_datasets():
         )
 
         if st.session_state["filter_dataset"] == "GHCN":
-
             # CARREGANDO OS DADOS DO GHCN
             datasets_ghcn.load_dataset_ghcn(dataframe_return=dataframe_return)
 
         elif st.session_state["filter_dataset"] == "INMET":
-
             # CARREGANDO OS DADOS DO INMET
             datasets_inmet.load_dataset_inmet(dataframe_return=dataframe_return)
 
