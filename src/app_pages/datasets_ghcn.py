@@ -9,7 +9,7 @@ from src.utils.config_dataframe_explorer import (
 from src.utils.map.map_functions import folium_static
 from src.config_app.config_app import settings
 from src.utils.graphs.graphs_datasets import create_graph_timeseries_datasets
-from src.utils.graphs.time_series_analysis import plot_mean_variance_over_time
+from src.utils.graphs.time_series_analysis import plot_mean_variance_over_time, test_ljung_box, validate_white_noise
 from src.utils.statistics_functions import (
     get_difference_list_values_versus_global_value,
 )
@@ -212,6 +212,13 @@ def load_dataset_ghcn(dataframe_return):
                 round(100 * np.max(list_difference)), 2
             )
         )
+
+        # ANÁLISE DE AUTOCORRELAÇÃO - APLICANDO O TESTE DE LJUNG-BOX
+        result_test_ljung_box, _ = test_ljung_box(data=dataframe_plot[column_timeseries_temp_axis],
+                                                  n_lags=10)
+
+        st.text("Teste de autocorrelação - Teste de Ljung-Box")
+        st.dataframe(result_test_ljung_box, hide_index=True)
 
     with st.expander("Precipitação"):
         container_prcp = st.container()
