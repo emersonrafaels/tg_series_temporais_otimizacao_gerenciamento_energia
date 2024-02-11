@@ -91,12 +91,18 @@ def load_dataset_ghcn(dataframe_return):
     st.text("Quantidade de medições: {}".format(len(st.session_state["selected_df"])))
 
     st.markdown("# 3. Distribuição das estações metereológicas")
-    st.text(
-        "- No mapa estão as estações metereológicas\napós os filtros aplicados no conjunto acima"
-    )
-    st.text(
-        "- Utilize o zoom lateral, ou o zoom do mouse, para visualizar mais\n detalhes das estações metereológicas"
-    )
+
+    with st.expander("Legenda do mapa"):
+
+        st.text(
+            "- No mapa estão as estações metereológicas\napós os filtros aplicados no conjunto acima"
+        )
+        st.text(
+            "- Utilize o zoom lateral, ou o zoom do mouse para visualizar mais detalhes do mapa"
+        )
+        st.text(
+            "- Clique sobre o icon da estação para visualizar mais\n detalhes das estações metereológicas"
+        )
 
     # PLOTANDO O MAPA DAS ESTAÇÕES METEREOLÓGICAS
     validator_map, st.session_state["mapobj"], _ = plot_map_dataset_ghcn(
