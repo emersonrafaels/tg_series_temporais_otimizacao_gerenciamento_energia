@@ -44,6 +44,7 @@ def dataframe_explorer(df: pd.DataFrame, case: bool = True) -> pd.DataFrame:
             "Filtrar dados usando a coluna",
             df.columns,
             key=f"{random_key_base}_multiselect",
+            placeholder="Escolha uma ou mais colunas",
         )
         filters: Dict[str, Any] = dict()
         for column in to_filter_columns:

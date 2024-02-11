@@ -135,6 +135,7 @@ def load_dataset_ghcn(dataframe_return):
         label="Selecione um ou mais valores para exibir",
         options=options_group,
         default=options_group[0],
+        placeholder="Selecione um ou mais valores para exibir"
     )
 
     # FILTRANDO BASEADO NO MULTISELECT

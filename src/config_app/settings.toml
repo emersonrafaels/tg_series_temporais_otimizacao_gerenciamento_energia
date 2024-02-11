@@ -10,7 +10,7 @@ STYLES_CSS = 'src/styles/style.css'
 # DATAFRAMES
 LIST_OPTIONS_DATAFRAME_EXPLORER = ["dataframe_explorer"]
 OPTION_DATAFRAME_EXPLORER = "dataframe_explorer"
-NUM_MIN_CATEGORY = 50
+NUM_MIN_CATEGORY = 9999
 
 
 # MAPA
