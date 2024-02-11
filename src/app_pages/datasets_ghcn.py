@@ -105,7 +105,7 @@ def load_dataset_ghcn(dataframe_return):
 
     st_data = folium_static(
         st.session_state["mapobj"],
-        width=900,
+        width=700,
         height=500,
         add_categorical_legend=False,
     )

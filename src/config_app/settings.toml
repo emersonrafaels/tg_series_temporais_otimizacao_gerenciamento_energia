@@ -4,7 +4,7 @@ APPNAME = "TG UFABC - ENERGIA - PREVISOR"
 APPNAME_LOG = "TG_UFABC_ENERGIA_PREVISOR.log"
 APPNAME_TITLE = "TG UFABC - ENERGIA - PREVISOR DE GERAÇÃO DE ENERGIA"
 APPNAME_TITLE_ICON = ":factory:"
-LOGO_APP = "src/assets/logo_ufabc.jpg"
+LOGO_APP = "src/assets/logo_ufabc.png"
 STYLES_CSS = 'src/styles/style.css'
 
 # DATAFRAMES
